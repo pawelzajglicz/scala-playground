@@ -1,4 +1,4 @@
-package lectures
+package lectures.part1basics
 
 object Expressions extends App {
 
@@ -48,7 +48,7 @@ object Expressions extends App {
     val y = 2
     val z = y + 1
 
-    if (z > 2) "hello" else "goodbye"  // value of block, because last expression
+    if (z > 2) "hello" else "goodbye" // value of block, because last expression
   }
 
   // val anotherValue = z + 1 // forbidden

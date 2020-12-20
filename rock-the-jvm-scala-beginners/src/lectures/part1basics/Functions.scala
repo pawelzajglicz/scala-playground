@@ -51,6 +51,7 @@ object Functions extends App {
     else number * factorial(number - 1)
 
   println(factorial(4))
+  println(factorial(5000))
 
   /*
     3. A Fibonacci function

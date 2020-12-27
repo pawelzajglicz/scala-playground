@@ -30,4 +30,6 @@ object AnonymousClasses extends App {
   }
 
   jim.sayHi
+
+
 }

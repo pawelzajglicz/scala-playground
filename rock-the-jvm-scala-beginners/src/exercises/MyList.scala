@@ -84,6 +84,8 @@ object ListTest extends App {
     override def apply(element: Int): Int = element * 2
   }))
   println(listOfIntegers.map((element: Int) => element * 2))
+  println(listOfIntegers.map(element => element * 2))
+  println(listOfIntegers.map(_ * 2))
 
 
   println(listOfNumberStrings.head.getClass)
@@ -96,6 +98,8 @@ object ListTest extends App {
     override def apply(testable: Int): Boolean = testable % 2 != 0
   }))
   println(listOfIntegers.filter((testable: Int) => testable % 2 != 0))
+  println(listOfIntegers.filter(testable => testable % 2 != 0))
+  println(listOfIntegers.filter(_ % 2 != 0))
 
 
   val listOfIntegers1: MyList[Int] = new Cons(1, new Cons(4, new Cons(7, Empty)))
@@ -103,6 +107,9 @@ object ListTest extends App {
 
   println(listOfIntegers ++ listOfIntegers1)
   println(listOfIntegers1)
+
+  println(listOfIntegers1.flatMap((element: Int) => new Cons[Int](element, new Cons[Int](element + 1, Empty))))
+  println(listOfIntegers1.flatMap(element => new Cons[Int](element, new Cons[Int](element + 1, Empty))))
   println(listOfIntegers1.flatMap(new Function1[Int, MyList[Int]] {
     override def apply(element: Int): MyList[Int] = new Cons[Int](element, new Cons[Int](element + 1, Empty))
   }))

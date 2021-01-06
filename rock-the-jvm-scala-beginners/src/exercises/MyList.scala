@@ -180,6 +180,15 @@ object ListTest extends App {
   println(listOfIntegers2.zipWith[String, String](listOfStrings, _ + "-" + _))
   println(listOfIntegers.fold(0)(_ + _))
 
+
+  // for comprehensions
+  println("For comprehensions")
+  val combination = for {
+    n <- listOfIntegers
+    string <- listOfStrings
+  } yield n + "-" + string
+
+  println(combination)
 }
 
 /*

@@ -1,5 +1,7 @@
 package exercises
 
+import lectures.part2oop.Generics.MyList
+
 abstract class MyList[+A] {
 
   /*
@@ -23,6 +25,12 @@ abstract class MyList[+A] {
 
   // concatenation
   def ++[B >: A](list: MyList[B]): MyList[B]
+
+  // hofs and curries exercises
+  def foreach(function: A => Unit): Unit
+  def sort(compare: (A, A) => Int): MyList[A]
+  def zipWith[B, C](list: MyList[B], function: (A, B) => C): MyList[C]
+  def fold[B](start: B)(function: (B, A) => B): B
 }
 
 case object Empty extends MyList[Nothing] {
@@ -38,6 +46,16 @@ case object Empty extends MyList[Nothing] {
   override def flatMap[B](transformer: Nothing => MyList[B]): MyList[B] = Empty
   override def filter(predicate: Nothing => Boolean): MyList[Nothing] = Empty
   override def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
+
+  // hofs and curries exercises
+  override def foreach(function: Nothing => Unit): Unit = ()
+  override def sort(compare: (Nothing, Nothing) => Int): MyList[Nothing] = Empty
+
+  override def zipWith[B, C](list: MyList[B], function: (Nothing, B) => C): MyList[C] =
+    if (!list.isEmpty) throw new RuntimeException("Lists have different length!")
+    else Empty
+
+  override def fold[B](start: B)(function: (B, Nothing) => B): B = start
 }
 
 
@@ -62,6 +80,41 @@ case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
 
   override def flatMap[B](transformer: A => MyList[B]): MyList[B] =
     transformer(h) ++ t.flatMap(transformer)
+
+
+  // hofs and curries exercises
+  override def foreach(function: A => Unit): Unit = {
+    function(h)
+    t.foreach(function)
+  }
+
+  override def sort(compare: (A, A) => Int): MyList[A] = {
+
+    def insert(x: A, sortedList: MyList[A]): MyList[A] = {
+      if (sortedList.isEmpty) Cons(x, Empty)
+      else if (compare(x, sortedList.head) <= 0) Cons(x, Empty)
+      else Cons(sortedList.head, insert(x, sortedList.tail))
+    }
+
+    val sortedTail = t.sort(compare)
+    insert(h, sortedTail)
+  }
+
+  override def zipWith[B, C](list: MyList[B], function: (A, B) => C): MyList[C] =
+    if (list.isEmpty) throw new RuntimeException("Lists have different length!")
+    else Cons(function(head, list.head), tail.zipWith(list.tail, function))
+
+
+  /*
+    [1,2,3].fold(0)(+) =
+    [2,3].fold(1)(+) =
+    [3].fold(3)(+) =
+    [].fold(6)(+) =
+    6
+   */
+  override def fold[B](start: B)(function: (B, A) => B): B = {
+    t.fold(function(start, h))(function)
+  }
 }
 
 object ListTest extends App {
@@ -76,6 +129,7 @@ object ListTest extends App {
   val cloneListOfIntegers: MyList[Int] = new Cons(1, new Cons(2, new Cons(3, Empty)))
   val listOfStrings: MyList[String] = new Cons("Hello", new Cons("Scala", Empty))
   val listOfNumberStrings: MyList[String] = new Cons("1", new Cons("2", Empty))
+  val listOfNumberStrings2: MyList[String] = new Cons("1", new Cons("2", new Cons("3", Empty)))
 
   println(listOfIntegers)
   println(listOfStrings)
@@ -115,6 +169,17 @@ object ListTest extends App {
   }))
 
   println(listOfIntegers == cloneListOfIntegers)
+
+
+  println("HOFs and curries exercises")
+  listOfIntegers.foreach(println)
+  println(listOfIntegers.sort((x, y) => y - x))
+  println(listOfIntegers.zipWith(listOfIntegers, (x, y: Int) => x * y))
+  // println(listOfIntegers.zipWith[String, String](listOfNumberStrings, _ + "-" + _))
+  println(listOfIntegers.zipWith[String, String](listOfNumberStrings2, _ + "-" + _))
+  println(listOfIntegers2.zipWith[String, String](listOfStrings, _ + "-" + _))
+  println(listOfIntegers.fold(0)(_ + _))
+
 }
 
 /*

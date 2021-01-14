@@ -35,6 +35,8 @@ class Directory(override val parentPath: String, override val name: String, val 
 
   override def asDirectory: Directory = this
 
+  override def getType: String = "Directory"
+
 }
 
 object Directory {

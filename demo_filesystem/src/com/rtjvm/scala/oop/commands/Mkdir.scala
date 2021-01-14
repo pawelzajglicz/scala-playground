@@ -8,7 +8,7 @@ class Mkdir(name: String) extends Command {
   override def apply(state: State): State = {
     val wd = state.workingDirectory
     if(wd.hasEntry(name)) {
-      state.setMessage("Entry " + name + "already exists!")
+      state.setMessage("Entry " + name + " already exists!")
     } else if (name.contains(Directory.SEPARATOR)) {
       state.setMessage(name + "must not contain separators!")
     } else if (checkIllegal(name)) {
